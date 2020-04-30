@@ -6,7 +6,6 @@ import { ListItem } from 'react-native-elements'
 import StickyHeader from './UI/StickyHeader'
 
 export default function OrderList(props) {
-    let navigationOptions = {title: 'Lahkot',}
     const { navigate } = props.navigation
     const [birdOrders, setBirdOrders] = useState([])
     const birdData = birdsJson
@@ -51,19 +50,19 @@ export default function OrderList(props) {
         delete bird.Suku
   
         if(birdName){
-          console.log('dsssSss',bird)
+          console.log('ss',bird)
           bird.Kuva = `./birdPictures/${birdName}.png`
           bird.omatHavainnot = 0
           setBirds(prevState => ([...prevState, bird]))
         }
       }
       getOrders(birds)
-      console.log('sssssss',birds)
+      console.log('ss',birds)
     }
   
     
     function getOrders(birds) {
-        console.log('ssssss', birds)
+        console.log('ss', birds)
         let orders = []
         for (let i = 0; i < birds.length; i++) {
             let bird = birds[i]
@@ -81,7 +80,7 @@ export default function OrderList(props) {
             <View>
                 <ListItem
                     title={item}
-                    onPress={() => navigate('FamilyList', {birds: birds, order: item})}
+                    onPress={() => navigate('Heimot', {birds: birds, order: item})}
                     bottomDivider
                     chevron
                 />
@@ -96,14 +95,12 @@ export default function OrderList(props) {
                     keyExtractor={keyExtractor}
                     renderItem={renderItem}
                     data={birdOrders}
-                    ListHeaderComponent={<StickyHeader />}
+                    ListHeaderComponent={<StickyHeader title={'Suomen linnut'}/>}
                 />
             </View>
         </View>
     )
 }
-OrderList.navigationOptions = ({navigate}) => ({title: 'Lahkot'})
-
 const styles = StyleSheet.create({
     master: {
       flex: 1,

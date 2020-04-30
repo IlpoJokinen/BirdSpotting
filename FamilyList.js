@@ -4,12 +4,10 @@ import { ListItem } from 'react-native-elements'
 import StickyHeader from './UI/StickyHeader'
 
 export default function FamilyList(props) {
-    console.log('props', props)
-    navigationOptions = {title: 'Heimot',}
-    const { params } = props.navigation.state
+    //navigationOptions = {title: 'Heimot',}
     const { navigate } = props.navigation
-    let propOrder = params.order
-    let propBirds = params.birds
+    let propOrder = props.route.params.order
+    let propBirds = props.route.params.birds
     const [birdFamilies, setBirdFamilies] = useState([])
 
     useEffect(() => {
@@ -36,7 +34,7 @@ export default function FamilyList(props) {
                     title={item}
                     bottomDivider
                     chevron
-                    onPress={() => navigate('SpeciesList', {birds: propBirds, family: item})}
+                    onPress={() => navigate('Lajit', {birds: propBirds, family: item})}
                 />
             </View>
         )
@@ -49,14 +47,13 @@ export default function FamilyList(props) {
                     keyExtractor={keyExtractor}
                     renderItem={renderItem}
                     data={birdFamilies}
-                    ListHeaderComponent={<StickyHeader />}
+                    ListHeaderComponent={<StickyHeader title={'Suomen linnut'}/>}
                     stickyHeaderIndices={[0]}
                 />
             </View>
         </View>
     )
 }
-FamilyList.navigationOptions = ({navigate}) => ({title: 'Heimot'})
 const styles = StyleSheet.create({
     master: {
       flex: 1,

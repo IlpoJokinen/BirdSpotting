@@ -4,11 +4,9 @@ import { ListItem } from 'react-native-elements'
 import StickyHeader from './UI/StickyHeader'
 
 const SpeciesList = (props) => {
-    navigationOptions = {title: 'Lajit',}
-    const { params } = props.navigation.state
     const { navigate } = props.navigation
-    let propFamily = params.family
-    let propBirds = params.birds
+    let propFamily = props.route.params.family
+    let propBirds = props.route.params.birds
     const [birdSpecies, setBirdSpecies] = useState([])
     
     useEffect(() => {
@@ -35,7 +33,7 @@ const SpeciesList = (props) => {
                     title={item}
                     bottomDivider
                     chevron
-                    onPress={() => navigate('SpeciesPage', {birds: propBirds, specie: item})}
+                    onPress={() => navigate('Laji', {birds: propBirds, specie: item})}
                 />
             </View>
         )
@@ -48,15 +46,13 @@ const SpeciesList = (props) => {
                     keyExtractor={keyExtractor}
                     renderItem={renderItem}
                     data={birdSpecies}
-                    ListHeaderComponent={<StickyHeader />}
+                    ListHeaderComponent={<StickyHeader title={'Suomen linnut'}/>}
                     stickyHeaderIndices={[0]}
                 />
             </View>
         </View>
     )
 }
-SpeciesList.navigationOptions = ({navigate}) => ({title: 'Lajit'})
-
 const styles = StyleSheet.create({
     master: {
       flex: 1,
