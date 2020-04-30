@@ -1,69 +1,53 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
-import linnut from './linnut.json';
-import kuvat from './pictureNames.json';
+import React, {useEffect, useState} from 'react'
+import OrderList from './OrderList'
+import FamilyList from './FamilyList'
+import SpeciesList from './SpeciesList'
+import SpeciesPage from './SpeciesPage'
+import RegistrationForm from './Registration'
+import ProfilePage from './ProfilePage'
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { NavigationContainer } from '@react-navigation/native';
+import { View, StyleSheet } from 'react-native'
+/*const AppNavigator = createStackNavigator({
+  OrderList: {screen: OrderList},
+  FamilyList: {screen: FamilyList},
+  SpeciesList: {screen: SpeciesList},
+  SpeciesPage: {screen: SpeciesPage},
+  ProfilePage: {screen: ProfilePage}
+})*/
+/*const AppNavigator = createTabNavigator({
+  Minä: {screen: ProfilePage},
+  Linnut: {screen: OrderList}
+})
+
+const AppContainer = createAppContainer(AppNavigator)*/
+const Drawer = createDrawerNavigator()
+
+const ProfileScreen = ({ navigation }) => {
+  return (
+    <View style={styles.master}>
+      <Button
+        onPress={() => navigation.navigate('Bird list')}
+        title="Lista suomen linnuista"
+      />
+    </View>
+  )
+} 
 
 export default function App() {
 
-  const [lintuData, setLintuData] = useState({})
-  const [kuvaData, setKuvaData] = useState({})
-  const [nimet, setNimet] = useState([])
-
-  useEffect(() => {
-    setLintuData(linnut)
-    setKuvaData(kuvat)
-  }, [])
-
-  function editkuvaData() {
-    let kuvaTaulukko = Object.values(kuvaData)
-    let uusiNimetState = nimet.slice()
-    for (let i = 0; i < kuvaTaulukko.length; i++) {
-      let nameIndex = kuvaTaulukko[i].name.substring(0, kuvaTaulukko[i].name.length - 4)
-      uusiNimetState.push(nameIndex)
-      setNimet(uusiNimetState)
-    }
-  }
-
-  function birdFound(lintuNimi) {
-    for(let i = 0; i < nimet.length; i++) {
-      if(nimet[i] == lintuNimi) {
-        let kuvaNimi = nimet[i]
-        return kuvaNimi
-      }
-    }
-    return null
-  }
-
-  function editData(lintuData) {
-    let uusiTaulukko = []
-    let lintuTaulukko = lintuData
-  
-    editkuvaData()
-    for (let i = 0; i < lintuTaulukko.length; i++) {
-      let lintu = lintuTaulukko[i]
-      let lintuNimi = birdFound(lintu.Nimi)
-      delete lintu.Suku
-
-      if(lintuNimi){
-        lintu.Kuva = `./lintuKuvat/${lintuNimi}.png`
-        uusiTaulukko.push(lintu)
-      }
-    }
-    return console.log('valmis', uusiTaulukko)
-  }
-
   return (
-    <View style={styles.container}>
-      <Button onPress={() => editData(lintuData)} title ="SHOW BIRDS"></Button>
-    </View>
-  );
+    <NavigationContainer>
+      <Drawer.Navigator initialRouteName="Bird list">
+        <Drawer.Screen name="Profile Page" component={ProfilePage} />
+        <Drawer.Screen name="Bird list" component={OrderList} />
+        <Drawer.Screen name="FamilyList" component={FamilyList} />
+      </Drawer.Navigator>
+    </NavigationContainer>
+  )
 }
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  master: {
+    flex: 1
+  }
+})
