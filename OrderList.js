@@ -14,14 +14,15 @@ export default function OrderList(props) {
     const [birds, setBirds] = useState([])
     
     useEffect(() => {
-      setPictureData(picturesJson)
-    }, [picturesJson])
+      getBirdsByOrder()
+    }, [])
   
-    useEffect(() => {
+    function getBirdsByOrder() {
+      setPictureData(picturesJson)
       editPictureData()
       editData()
-    }, [birdsJson])
-  
+    }
+
     function editPictureData() {
       let pictureArray = Object.values(pictureData)
       let newNameState = names.slice()
@@ -31,7 +32,22 @@ export default function OrderList(props) {
         setNames(newNameState)
       }
     }
-  
+
+    function editData() {
+      let birdArray = birdData
+      for (let i = 0; i < birdArray.length; i++) {
+        let bird = birdArray[i]
+        let birdName = birdFound(bird.Nimi)
+        delete bird.Suku
+        if(birdName){
+          console.log('dssssss',bird)
+          setBirds(prevState => ([...prevState, bird]))
+        }
+      }
+      getOrders(birds)
+      console.log('sssdssssds',birds)
+    }
+    
     function birdFound(birdName) {
       for(let i = 0; i < names.length; i++) {
         if(names[i] == birdName) {
@@ -41,28 +57,9 @@ export default function OrderList(props) {
       }
       return null
     }
-  
-    function editData() {
-      let birdArray = birdData
-      for (let i = 0; i < birdArray.length; i++) {
-        let bird = birdArray[i]
-        let birdName = birdFound(bird.Nimi)
-        delete bird.Suku
-  
-        if(birdName){
-          console.log('ss',bird)
-          bird.Kuva = `./birdPictures/${birdName}.png`
-          bird.omatHavainnot = 0
-          setBirds(prevState => ([...prevState, bird]))
-        }
-      }
-      getOrders(birds)
-      console.log('ss',birds)
-    }
-  
     
     function getOrders(birds) {
-        console.log('ss', birds)
+        console.log('ssssssdsds', birds)
         let orders = []
         for (let i = 0; i < birds.length; i++) {
             let bird = birds[i]
@@ -95,7 +92,7 @@ export default function OrderList(props) {
                     keyExtractor={keyExtractor}
                     renderItem={renderItem}
                     data={birdOrders}
-                    ListHeaderComponent={<StickyHeader title={'Suomen linnut'}/>}
+                    ListHeaderComponent={<StickyHeader title={'Suomen linnut'} view={0}/>}
                 />
             </View>
         </View>

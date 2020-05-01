@@ -46,7 +46,7 @@ const SpeciesList = (props) => {
                     keyExtractor={keyExtractor}
                     renderItem={renderItem}
                     data={birdSpecies}
-                    ListHeaderComponent={<StickyHeader title={'Suomen linnut'}/>}
+                    ListHeaderComponent={<StickyHeader title={'Suomen linnut'} view={2} navigate={navigate} backIcon={true}/>}
                     stickyHeaderIndices={[0]}
                 />
             </View>

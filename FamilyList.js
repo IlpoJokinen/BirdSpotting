@@ -4,7 +4,6 @@ import { ListItem } from 'react-native-elements'
 import StickyHeader from './UI/StickyHeader'
 
 export default function FamilyList(props) {
-    //navigationOptions = {title: 'Heimot',}
     const { navigate } = props.navigation
     let propOrder = props.route.params.order
     let propBirds = props.route.params.birds
@@ -47,7 +46,7 @@ export default function FamilyList(props) {
                     keyExtractor={keyExtractor}
                     renderItem={renderItem}
                     data={birdFamilies}
-                    ListHeaderComponent={<StickyHeader title={'Suomen linnut'}/>}
+                    ListHeaderComponent={<StickyHeader title={'Suomen linnut'} backIcon={true} navigate={navigate} view={1}/>}
                     stickyHeaderIndices={[0]}
                 />
             </View>

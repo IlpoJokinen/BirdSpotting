@@ -23,6 +23,7 @@
     "react-native-drawer": "^2.5.1",
     "react-native-elements": "^1.2.7",
     "react-native-gesture-handler": "~1.5.0",
+    "react-native-global-props": "^1.1.5",
     "react-native-paper": "^3.9.0",
     "react-native-radio-button-group": "^1.0.2",
     "react-native-reanimated": "~1.4.0",
@@ -32,7 +33,8 @@
     "react-native-web": "~0.11.7",
     "react-navigation": "^4.3.7",
     "react-navigation-stack": "^2.3.11",
-    "react-navigation-tabs": "^2.8.11"
+    "react-navigation-tabs": "^2.8.11",
+    "expo-font": "~8.0.0"
   },
   "devDependencies": {
     "babel-preset-expo": "~8.0.0",

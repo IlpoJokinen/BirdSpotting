@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, Modal, TouchableHighlight } from 'react-native'
+import { StyleSheet, View, Modal, TouchableHighlight, Image } from 'react-native'
 import { Card } from 'react-native-elements'
 import RadioGroup from 'react-native-radio-button-group'
 import { TextInput } from 'react-native-paper'
 import StickyHeader from './UI/StickyHeader'
 import { Snackbar, Button} from 'react-native-paper'
-import firebase from './config'
+import firebase from './firebaseConfig'
+import Text from './UI/CustomTextComponent'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 const SpeciesPage = (props) => {
-    //const { navigate } = props.navigation
+    const { navigate } = props.navigation
     const [showModal, toggleModal] = useState(false)
     let propSpecie = props.route.params.specie
     let propBirds = props.route.params.birds
@@ -22,7 +23,6 @@ const SpeciesPage = (props) => {
         appearance: '',
         endangerment: '',
         observation: 0,
-        picture: '',
     })
     let newBird = {
         latinName: '',
@@ -32,7 +32,6 @@ const SpeciesPage = (props) => {
         appearance: '',
         endangerment: '',
         observation: 0,
-        picture: '',
     }
     const [spottedBird, setSpottedBird] = useState({sex: '', location: '', obs: 1, obsTime: ''})
     const options1 = [
@@ -48,7 +47,10 @@ const SpeciesPage = (props) => {
         getBird(propSpecie, propBirds)
     }, [])
 
-    function getBird(propSpecie, propBirds) {
+    async function getBird(propSpecie, propBirds) {
+        const picRef = firebase.storage().ref(`BirdPictures/${propSpecie}.png`)
+        const imageUrl = await picRef.getDownloadURL()
+
         for (let i = 0; i < propBirds.length; i++) {
             let bird = propBirds[i]
             if (bird.Nimi === propSpecie) {
@@ -59,7 +61,7 @@ const SpeciesPage = (props) => {
                 newBird.appearance = bird.Esiintyminen
                 newBird.endangerment = bird.Uhanalaisuusluokka
                 newBird.observation = bird.Havaintomäärä
-                newBird.picture = `require(${bird.Kuva})`
+                newBird.picture = imageUrl
             }
         }
         setBird({...bird,
@@ -70,7 +72,7 @@ const SpeciesPage = (props) => {
              appearance: newBird.appearance,
              endangerment: newBird.endangerment,
              observation: newBird.observation,
-             picture: newBird.picture,
+             picture: newBird.picture
         })
     }
 
@@ -93,35 +95,36 @@ const SpeciesPage = (props) => {
     return (
         <View style={styles.master}>
             <View style={styles.nav}>
-                <StickyHeader />
+                <StickyHeader backIcon={true} navigate={navigate}/>
             </View>
-            <View style={styles.image}>
+            <View style={styles.imageBox}>
+                <Image source={{uri: bird.picture}} style={styles.image}/>
             </View>
             <View style={styles.infoBox}>
                 <View style={styles.card}>
                     <Card title={`${bird.finnishName + '\n'}  -  ${'\n' + bird.latinName}`}>
                         <View style={styles.cardItem}>
-                            <Text style={styles.rows}>Lahko:</Text>
-                            <Text>{bird.order}</Text>
+                            <Text id='speciesText'>Lahko:</Text>
+                            <Text id='speciesText'>{bird.order}</Text>
                         </View>
                         <View style={styles.cardItem}>
-                            <Text style={styles.rows}>Heimo:</Text>
-                            <Text>{bird.family}</Text>
+                            <Text id='speciesText'>Heimo:</Text>
+                            <Text id='speciesText'>{bird.family}</Text>
                         </View>
                         <View style={styles.cardItem}>
-                            <Text style={styles.rows}>Uhanalaisuus:</Text>
-                            <Text>{bird.endangerment}</Text>
+                            <Text id='speciesText'>Uhanalaisuus:</Text>
+                            <Text id='speciesText'>{bird.endangerment}</Text>
                         </View>
                         <View style={styles.cardItem}>
-                            <Text style={styles.rows}>Esiintyminen Suomessa:</Text>
-                            <Text> {bird.appearance}</Text>
+                            <Text id='speciesText'>Esiintyminen Suomessa:</Text>
+                            <Text id='speciesText'> {bird.appearance}</Text>
                         </View>
                         <View style={styles.cardItem}>
-                            <Text style={styles.rows}>Havainnot Suomessa:</Text>
-                            <Text>{bird.observation}</Text>
+                            <Text id='speciesText'>Havainnot Suomessa:</Text>
+                            <Text id='speciesText'>{bird.observation}</Text>
                         </View>
                         <TouchableHighlight style={styles.openButton} onPress={() => toggleModal(true)}>
-                            <Text style={styles.textStyle}>Bongattu!</Text>
+                            <Text id='speciesButtonText'>Bongattu!</Text>
                         </TouchableHighlight>
                     </Card>
                 </View>
@@ -129,28 +132,29 @@ const SpeciesPage = (props) => {
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
                             <View style={styles.modalTop}>
-                                <Text style={styles.modalBirdName}>{bird.finnishName}</Text>
+                                <Text id='modalBirdName'>{bird.finnishName}</Text>
                                 <Icon
                                     name="times"
-                                    size={30}
+                                    size={31}
                                     color="white"
                                     onPress={() => toggleModal(!showModal)}
-                                    style={{marginLeft: 200}}
+                                    style={{marginLeft: 185}}
                                 />
                             </View>
                             <View style={styles.modalBottom}>
-                                <Text style={{color: '#002f6c', fontSize: 23, textAlign: 'center'}}>Havainto tiedot</Text>
-                                <Text style={styles.modalText}>Havainnon biotooppi</Text>
+                                <Text id='modalHeader'>Havainto tiedot</Text>
+                                <Text id='modalText'>Havainnon biotooppi</Text>
                                 <TextInput value={spottedBird.location} onChangeText={(location) => setSpottedBird({...spottedBird, location: location})} mode="outlined" style={{height: 40, width: 200}} label='kangasmetsä, lehto...'/>
-                                <Text style={styles.modalText}>Sukupuoli</Text>
+                                <Text id='modalText'>Sukupuoli</Text>
                                 <RadioGroup options={options1} onChange={(option) => setSpottedBird({...spottedBird, sex: option.label})} horizontal={true} circleStyle={{fillColor: '#2196F3'}}/>
-                                <Text style={styles.modalText}>Havainnon ajankohta</Text>
+                                <Text id='modalText'>Havainnon ajankohta</Text>
                                 <RadioGroup options={options2} onChange={(option) => setSpottedBird({...spottedBird, obsTime: option.label})} horizontal={true} circleStyle={{fillColor: '#2196F3'}}/>
                                 <TouchableHighlight 
                                     style={{...styles.openButton, backgroundColor: "#2196F3"}} 
                                     onPress={() => spottedBirdToDatabase()}
+                          
                                 >
-                                    <Text style={styles.textStyle}>Tallenna</Text>
+                                <Text id='speciesButtonText'>Tallenna</Text>
                                 </TouchableHighlight>
                             </View>
                         </View>
@@ -158,7 +162,7 @@ const SpeciesPage = (props) => {
                 </Modal>
             </View>
             <View>
-                <Snackbar visible={visible} onDismiss={onDismissSnackBar} duration={2500} >
+                <Snackbar visible={visible} onDismiss={onDismissSnackBar} duration={2500} style={{borderRadius: 20, backgroundColor: '#002f6c'}}>
                     Havainto lisätty profiiliisi!
                 </Snackbar>
             </View>
@@ -173,9 +177,18 @@ const styles = StyleSheet.create({
     nav: {
         flex: 1
     },
-    image: {
+    imageBox: {
         flex: 2,
-        marginBottom: -50
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    image: {
+        height: 148,
+        width: 148,
+        borderRadius: 148/2,
+        borderWidth: 2,
+        borderColor: '#fff'
     },
     infoBox: {
         flex: 6,
@@ -192,16 +205,17 @@ const styles = StyleSheet.create({
           height: 2
         },
         shadowOpacity: 0.25,
-        shadowRadius: 3.84,
+        shadowRadius: 3.84
     },
     cardItem: {
         flexDirection: 'row',
         justifyContent: 'space-between'
     },  
     centeredView: {
-        flex: 1,
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        marginBottom: 'auto',
+        marginTop: 'auto'
     },  
     modalView: {
         margin: 10,
@@ -220,7 +234,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#2196F3',
         height: 35,
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        borderTopRightRadius: 10,
+        borderTopLeftRadius: 10
     },
     modalBottom: {
         padding: 20
@@ -233,22 +249,10 @@ const styles = StyleSheet.create({
         width: 120,
         marginLeft: 85
     }, 
-    modalText: {
-        fontSize: 15,
-        color: '#2196F3',
-        marginBottom: 10,
-        marginTop: 10,
-    },
     textStyle: {
         color: "white",
         fontWeight: "bold",
         textAlign: "center"
-    },
-    modalBirdName: {
-        marginLeft: 15,
-        color: "white",
-        fontWeight: 'bold',
-        fontSize: 13
     }
 })
 export default SpeciesPage
