@@ -26,7 +26,7 @@ export default function StickyHeader({ title, backIcon, navigate, view }) {
                 name="reply"
                 size={30}
                 color="white"
-                style={view === 1 || view === 2 ? {marginRight: 20} : {marginRight: 10}}
+                style={view === 1 || view === 2 ? {marginRight: 25} : {marginRight: 10}}
                 onPress={view === 2 ? () => navigate('Heimot') : () => navigate('Lahkot')}
             /> 
             </View> : null

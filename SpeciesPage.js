@@ -4,7 +4,7 @@ import { Card } from 'react-native-elements'
 import RadioGroup from 'react-native-radio-button-group'
 import { TextInput } from 'react-native-paper'
 import StickyHeader from './UI/StickyHeader'
-import { Snackbar, Button} from 'react-native-paper'
+import { Snackbar } from 'react-native-paper'
 import firebase from './firebaseConfig'
 import Text from './UI/CustomTextComponent'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -82,10 +82,6 @@ const SpeciesPage = (props) => {
         )
         toggleModal(!showModal)
         setVisible(true)
-    }
-
-    function onToggleSnackBar() {
-        setVisible(!visible)
     }
 
     function onDismissSnackBar() {

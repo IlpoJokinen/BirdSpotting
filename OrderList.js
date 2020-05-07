@@ -1,5 +1,4 @@
 import birdsJson from './birds.json'
-import picturesJson from './pictureNames.json'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, FlatList } from 'react-native'
 import { ListItem } from 'react-native-elements'
@@ -9,67 +8,24 @@ export default function OrderList(props) {
     const { navigate } = props.navigation
     const [birdOrders, setBirdOrders] = useState([])
     const birdData = birdsJson
-    const [pictureData, setPictureData] = useState({})
-    const [names, setNames] = useState([])
-    const [birds, setBirds] = useState([])
-    
-    useEffect(() => {
-      getBirdsByOrder()
-    }, [])
-  
-    function getBirdsByOrder() {
-      setPictureData(picturesJson)
-      editPictureData()
-      editData()
-    }
 
-    function editPictureData() {
-      let pictureArray = Object.values(pictureData)
-      let newNameState = names.slice()
-      for (let i = 0; i < pictureArray.length; i++) {
-        let nameIndex = pictureArray[i].name.substring(0, pictureArray[i].name.length - 4)
-        newNameState.push(nameIndex)
-        setNames(newNameState)
-      }
-    }
+    useEffect(() => {
+        editData()
+    }, [])
 
     function editData() {
       let birdArray = birdData
-      for (let i = 0; i < birdArray.length; i++) {
+      let orders = []
+      for (let i = 0; i < birdData.length; i++) {
         let bird = birdArray[i]
-        let birdName = birdFound(bird.Nimi)
         delete bird.Suku
-        if(birdName){
-          console.log('dssssss',bird)
-          setBirds(prevState => ([...prevState, bird]))
+        if (!orders.includes(bird.Lahko)) {
+          orders.push(bird.Lahko)
         }
       }
-      getOrders(birds)
-      console.log('sssdssssds',birds)
+      setBirdOrders(orders)
     }
     
-    function birdFound(birdName) {
-      for(let i = 0; i < names.length; i++) {
-        if(names[i] == birdName) {
-          let pictureName = names[i]
-          return pictureName
-        }
-      }
-      return null
-    }
-    
-    function getOrders(birds) {
-        console.log('ssssssdsds', birds)
-        let orders = []
-        for (let i = 0; i < birds.length; i++) {
-            let bird = birds[i]
-            if (!orders.includes(bird.Lahko)) {
-                orders.push(bird.Lahko)
-            }
-        }
-        setBirdOrders(orders)
-    }
-
     const keyExtractor = (item, index) => index.toString()
 
     const renderItem = ({ item }) => {
@@ -77,7 +33,7 @@ export default function OrderList(props) {
             <View>
                 <ListItem
                     title={item}
-                    onPress={() => navigate('Heimot', {birds: birds, order: item})}
+                    onPress={() => navigate('Heimot', {birds: birdData, order: item})}
                     bottomDivider
                     chevron
                 />
