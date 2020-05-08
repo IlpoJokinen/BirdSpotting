@@ -68,7 +68,8 @@ const styles = StyleSheet.create({
         color: '#002f6c',
         fontSize: 22,
         textAlign: 'center',
-        fontFamily: 'montserrat-semibold'
+        fontFamily: 'montserrat-semibold',
+        marginTop: 15
     },
     modalBirdName: {
         marginLeft: 15,

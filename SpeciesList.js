@@ -18,7 +18,8 @@ const SpeciesList = (props) => {
         for (let i = 0; i < propBirds.length; i++) {
             let bird = propBirds[i]
             if (bird.Heimo === propFamily && !species.includes(bird.Nimi)) {
-                species.push(bird.Nimi)
+                let birdName = bird.Nimi[0].toUpperCase() + bird.Nimi.slice(1)
+                species.push(birdName)
             }
         }
         setBirdSpecies(species)
@@ -27,6 +28,7 @@ const SpeciesList = (props) => {
     const keyExtractor = (item, index) => index.toString()
 
     const renderItem = ({ item }) => {
+        console.log(item)
         return (
             <View>
                 <ListItem
