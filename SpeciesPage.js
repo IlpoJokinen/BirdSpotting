@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Modal, TouchableHighlight, Image } from 'react-native'
+import { StyleSheet, View, TouchableHighlight, Image } from 'react-native'
 import { Card } from 'react-native-elements'
-import RadioGroup from 'react-native-radio-button-group'
-import { TextInput, List, Snackbar, Checkbox } from 'react-native-paper'
+import { Snackbar } from 'react-native-paper'
 import StickyHeader from './UI/StickyHeader'
 import firebase from './firebaseConfig'
 import Text from './UI/CustomTextComponent'
-import Icon from 'react-native-vector-icons/FontAwesome'
+import Modal from './UI/ObservationModal'
 
 const SpeciesPage = (props) => {
     const { navigate } = props.navigation
     const [showModal, toggleModal] = useState(false)
     let propSpecie = props.route.params.specie[0].toLowerCase() + props.route.params.specie.slice(1)
     let propBirds = props.route.params.birds
-    const [folders, setFolders] = useState([])
     const [visible, setVisible] = useState(false)
-    const [expand, toggleExpand] = useState(false)
     const [bird, setBird] = useState({
         latinName: '',
         finnishName: '',
@@ -34,29 +31,12 @@ const SpeciesPage = (props) => {
         endangerment: '',
         observation: 0,
     }
-    const [spottedBird, setSpottedBird] = useState({folderName: '', sex: '', location: '', obs: 1, obsTime: ''})
-    const options1 = [
-        {id: 0, label: 'Koiras'},
-        {id: 1, label: 'Naaras'}
-    ], options2 = [
-        {id: 0, label: 'Aamu'},
-        {id: 1, label: 'Päivä'},
-        {id: 2, label: 'Ilta'},
-        {id: 3, label: 'Yö'},
-    ]
+ 
     useEffect(() => {
         getBird(propSpecie, propBirds)
     }, [])
 
-    useEffect(() => {
-        firebase.database().ref('folders/').on('value', snapshot => {
-            const data = snapshot.val()
-            if (data !== null) {
-                const folderObjs = Object.values(data)
-                setFolders(folderObjs)
-            }
-        })
-    }, [])
+ 
 
     async function getBird(propSpecie, propBirds) {
         const picRef = firebase.storage().ref(`BirdPictures/${propSpecie}.png`)
@@ -87,51 +67,10 @@ const SpeciesPage = (props) => {
         })
     }
 
-    function spottedBirdToDatabase() {
-        firebase.database().ref('observations/').push(
-          {'folderName': spottedBird.folderName, 'name': bird.finnishName, 'obs': spottedBird.obs, 'time': spottedBird.obsTime, 'location': spottedBird.location, 'sex': spottedBird.sex}
-        )
-        toggleModal(!showModal)
-        setVisible(true)
-    }
-
     function onDismissSnackBar() {
         setVisible(false)
     }
 
-    function handlePress() {
-        toggleExpand(!expand)
-    }
-    console.log(spottedBird)
-
-
-    const FolderList = () => {
-        const listOfFolders = folders.map(f => {
-            let color = '#969696'
-            if(spottedBird.folderName === f.folderName) {
-                color = '#002f6c'
-            }
-            return (
-                    <List.Item 
-                        title={f.folderName} 
-                        left={props => <List.Icon {...props} icon='folder' color={color} />}
-                        onPress={() => setSpottedBird({...spottedBird, folderName: f.folderName})}
-                    />
-            )
-        })
-
-        return <View>
-            <List.Section>
-                <List.Accordion
-                    title='Valitse kansio'
-                    expanded={expand}
-                    onPress={handlePress}
-                >
-                    {listOfFolders}
-                </List.Accordion>
-            </List.Section>
-            </View>
-    }
 
     return (
         <View style={styles.master}>
@@ -169,42 +108,9 @@ const SpeciesPage = (props) => {
                         </TouchableHighlight>
                     </Card>
                 </View>
-                <Modal animationType='slide' transparent={true} visible={showModal}>
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <View style={styles.modalTop}>
-                                <Text id='modalBirdName'>{bird.finnishName}</Text>
-                                <Icon
-                                    name="times"
-                                    size={31}
-                                    color="white"
-                                    onPress={() => toggleModal(!showModal)}
-                                    style={{marginLeft: 185}}
-                                />
-                            </View>
-                            <View style={styles.modalBottom}>
-                                <Text id='modalHeader'>Havainto tiedot</Text>
-                                <Text id='modalText'>Havainnon biotooppi</Text>
-                                <TextInput value={spottedBird.location} onChangeText={(location) => setSpottedBird({...spottedBird, location: location})} mode="outlined" style={{height: 40, width: 200}} label='kangasmetsä, lehto...'/>
-                                <Text id='modalText'>Sukupuoli</Text>
-                                <RadioGroup options={options1} onChange={(option) => setSpottedBird({...spottedBird, sex: option.label})} horizontal={true} circleStyle={{fillColor: '#2196F3'}}/>
-                                <Text id='modalText'>Havainnon ajankohta</Text>
-                                <RadioGroup options={options2} onChange={(option) => setSpottedBird({...spottedBird, obsTime: option.label})} horizontal={true} circleStyle={{fillColor: '#2196F3'}}/>
-                                <Text id='modalText'>Tallennus kansioon</Text>
-                                <FolderList />
-                                <TouchableHighlight 
-                                    style={{...styles.openButton, backgroundColor: "#2196F3"}} 
-                                    onPress={() => spottedBirdToDatabase()}
-                          
-                                >
-                                <Text id='speciesButtonText'>Tallenna</Text>
-                                </TouchableHighlight>
-                            </View>
-                        </View>
-                    </View>
-                </Modal>
+                <Modal toggleModal={toggleModal} modal={showModal} birdName={bird.finnishName} setVisible={setVisible}/>
             </View>
-            <View style={{textAlign: 'center'}}>
+            <View>
                 <Snackbar visible={visible} onDismiss={onDismissSnackBar} duration={2500} style={{borderRadius: 20, backgroundColor: '#002f6c'}}>
                     Havainto lisätty profiiliisi!
                 </Snackbar>

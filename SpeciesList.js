@@ -32,6 +32,7 @@ const SpeciesList = (props) => {
         return (
             <View>
                 <ListItem
+                    titleStyle={{fontFamily: 'montserrat-semibold', fontSize: 14}}
                     title={item}
                     bottomDivider
                     chevron

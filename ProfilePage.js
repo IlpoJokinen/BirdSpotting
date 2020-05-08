@@ -110,6 +110,7 @@ export default function ProfilePage (props) {
         return (
             <View>
                 <ListItem
+                    titleStyle={{fontFamily: 'montserrat-semibold', fontSize: 14}}
                     title={item.folderName}
                     onPress={() => console.log('hei')}
                     //bottomDivider

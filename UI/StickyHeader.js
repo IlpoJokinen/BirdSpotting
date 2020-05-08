@@ -54,9 +54,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center'
     },
-    textStyle1: {
-     
-    },
     textStyle2: {
         fontSize: 25,
         color: 'white',

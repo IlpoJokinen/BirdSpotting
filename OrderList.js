@@ -32,6 +32,7 @@ export default function OrderList(props) {
         return (
             <View>
                 <ListItem
+                    titleStyle={{fontFamily: 'montserrat-semibold', fontSize: 14}}
                     title={item}
                     onPress={() => navigate('Heimot', {birds: birdData, order: item})}
                     bottomDivider

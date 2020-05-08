@@ -39,6 +39,9 @@ const CustomTextComponent = (props) => {
     else if (props.id === 'modalText') {
         return <Text style={styles.modalText}>{props.children}</Text>
     }
+    else if (props.id === 'searchHeader') {
+        return <Text style={styles.searchHeader}>{props.children}</Text>
+    }
 }
 const styles = StyleSheet.create({
     header: {
@@ -83,6 +86,11 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginTop: 10,
         fontFamily: 'montserrat-semibold'
+    },
+    searchHeader: {
+        color: 'white',
+        fontSize: 30,
+        fontFamily: 'montserrat-semibold',
     }
 })
 export default CustomTextComponent

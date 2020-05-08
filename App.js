@@ -4,6 +4,7 @@ import FamilyList from './FamilyList'
 import ProfilePage from './ProfilePage'
 import SpeciesList from './SpeciesList'
 import SpeciesPage from './SpeciesPage'
+import SearchPage from './SearchPage'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { createStackNavigator } from '@react-navigation/stack'
 import { NavigationContainer } from '@react-navigation/native'
@@ -35,6 +36,12 @@ export default function App() {
         <Drawer.Screen name="Suomen linnut" component={BirdList} options={{
           drawerIcon: config => <Icon
             name="list"
+            size={25}
+          />
+        }}/>
+        <Drawer.Screen name="Etsi lintu" component={SearchPage} options={{
+          drawerIcon: config => <Icon
+            name="search"
             size={25}
           />
         }}/>
