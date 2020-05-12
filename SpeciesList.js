@@ -28,7 +28,6 @@ const SpeciesList = (props) => {
     const keyExtractor = (item, index) => index.toString()
 
     const renderItem = ({ item }) => {
-        console.log(item)
         return (
             <View>
                 <ListItem

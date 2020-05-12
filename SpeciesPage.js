@@ -31,10 +31,11 @@ const SpeciesPage = (props) => {
         endangerment: '',
         observation: 0,
     }
- 
+    console.log('propSpecie',propSpecie)
     useEffect(() => {
+        console.log('hei')
         getBird(propSpecie, propBirds)
-    }, [])
+    }, [props])
 
  
 
@@ -70,7 +71,6 @@ const SpeciesPage = (props) => {
     function onDismissSnackBar() {
         setVisible(false)
     }
-
 
     return (
         <View style={styles.master}>
@@ -108,7 +108,7 @@ const SpeciesPage = (props) => {
                         </TouchableHighlight>
                     </Card>
                 </View>
-                <Modal toggleModal={toggleModal} modal={showModal} birdName={bird.finnishName} setVisible={setVisible}/>
+                <Modal toggleModal={toggleModal} modal={showModal} birdName={bird.finnishName} birdPic={bird.picture} setVisible={setVisible}/>
             </View>
             <View>
                 <Snackbar visible={visible} onDismiss={onDismissSnackBar} duration={2500} style={{borderRadius: 20, backgroundColor: '#002f6c'}}>
@@ -127,15 +127,15 @@ const styles = StyleSheet.create({
         flex: 1
     },
     imageBox: {
-        flex: 2,
+        flex: 3,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center'
     },
     image: {
-        height: 148,
-        width: 148,
-        borderRadius: 148/2,
+        height: 190,
+        width: 190,
+        borderRadius: 190/2,
         borderWidth: 2,
         borderColor: '#fff'
     },
@@ -165,38 +165,14 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 'auto',
         marginTop: 'auto'
-    },  
-    modalView: {
-        margin: 10,
-        backgroundColor: "white",
-        borderRadius: 10,
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 2
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5
-    },
-    modalTop: {
-        backgroundColor: '#2196F3',
-        height: 35,
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderTopRightRadius: 10,
-        borderTopLeftRadius: 10
-    },
-    modalBottom: {
-        padding: 20
-    },
+    }, 
     openButton: {
         backgroundColor: "#2196F3",
         borderRadius: 20,
         padding: 10,
         elevation: 2,
         width: 120,
-        marginLeft: 85
+        marginLeft: 115
     }, 
     textStyle: {
         color: "white",

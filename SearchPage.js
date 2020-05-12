@@ -6,21 +6,29 @@ import { ListItem } from 'react-native-elements'
 import Text from './UI/CustomTextComponent'
 import StickyHeader from './UI/StickyHeader'
 
-const SearchPage = () => {
+const SearchPage = (props) => {
+    const { navigate } = props.navigation
     const birds = birdsJson
     const [state, setState] = useState({string: ''})
     const [names, setNames] = useState([])
 
     function getBirdNames() {
         let birdNames = []
+        let stringLower = state.string.toLowerCase()
         for(let i = 0; i < birds.length; i++) {
-            let editedName = birds[i].Nimi[0].toUpperCase() + birds[i].Nimi.slice(1)
-            if (editedName.includes(state.string)) {
-                birdNames.push(editedName)
+            let upperName = birds[i].Nimi[0].toUpperCase() + birds[i].Nimi.slice(1)
+            let lowerName = birds[i].Nimi[0].toLowerCase() + birds[i].Nimi.slice(1)
+            if (upperName.includes(state.string) || upperName.includes(stringLower)) {
+                birdNames.push(upperName)
+            }
+            if (lowerName.includes(state.string) || lowerName.includes(stringLower)) {
+                birdNames.push(lowerName[0].toUpperCase() + lowerName.slice(1))
             }
         }
+
         let sortedNames = birdNames.sort()
-        setNames(sortedNames)
+        let removeDuplicates = sortedNames.filter((name, index) => sortedNames.indexOf(name) === index)
+        setNames(removeDuplicates)
     }
 
     useEffect(() => {
@@ -33,13 +41,12 @@ const SearchPage = () => {
     const keyExtractor = (item, index) => index.toString()
 
     const renderItem = ({ item }) => {
-  
         return (
             <View>
                 <ListItem
                     titleStyle={{fontFamily: 'montserrat-semibold', fontSize: 14}}
                     title={item}
-                    //onPress={} TÄSTÄ PITÄISI PÄÄSTÄ SpeciesPage.js:ään!
+                    onPress={() => props.navigation.navigate('Suomen linnut', {screen: 'Laji', params: { specie: item, birds: birds }})}
                     chevron
                     leftIcon={<Image source={require('./assets/images/crow-solid.png')} style={{width: 30, height: 30}}/>}
                 />

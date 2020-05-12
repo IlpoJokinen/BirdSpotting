@@ -27,6 +27,9 @@ const CustomTextComponent = (props) => {
     else if (props.id === 'speciesText') {
         return <Text style={styles.speciesText}>{props.children}</Text>
     }
+    else if (props.id === 'timeText') {
+        return <Text style={styles.timeText}>{props.children}</Text>
+    }
     else if (props.id === 'speciesButtonText') {
         return <Text style={styles.speciesButtonText}>{props.children}</Text>
     }
@@ -53,13 +56,19 @@ const styles = StyleSheet.create({
     profileText: {
         fontSize: 15,
         fontFamily: 'montserrat-semibold',
-        color: '#2d2d2e'
+        color: '#2d2d2e',
+        marginLeft: 15
     },
     speciesText: {
         fontSize: 13,
         fontFamily: 'montserrat-semibold',
         color: '#2d2d2e',
         marginBottom: 20
+    },
+    timeText: {
+        fontSize: 13,
+        fontFamily: 'montserrat-semibold',
+        color: '#2d2d2e',
     },
     speciesButtonText: {
         fontSize: 15,
@@ -70,9 +79,10 @@ const styles = StyleSheet.create({
     modalHeader: {
         color: '#002f6c',
         fontSize: 22,
-        textAlign: 'center',
+        marginLeft: 15,
         fontFamily: 'montserrat-semibold',
-        marginTop: 15
+        marginTop: 15,
+        marginBottom: 10
     },
     modalBirdName: {
         marginLeft: 15,
