@@ -24,6 +24,9 @@ const CustomTextComponent = (props) => {
     else if (props.id === 'profileText') {
         return <Text style={styles.profileText}>{props.children}</Text>
     }
+    else if (props.id === 'noFoldersText') {
+        return <Text style={styles.noFoldersText}>{props.children}</Text>
+    }
     else if (props.id === 'speciesText') {
         return <Text style={styles.speciesText}>{props.children}</Text>
     }
@@ -58,6 +61,18 @@ const styles = StyleSheet.create({
         fontFamily: 'montserrat-semibold',
         color: '#2d2d2e',
         marginLeft: 15
+    },
+    noFoldersText: {
+        fontSize: 15,
+        textAlign: 'center',
+        width: '60%',
+        height: '30%',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginTop: 'auto',
+        marginBottom: 'auto',
+        fontFamily: 'montserrat-semibold',
+        color: '#2d2d2e'
     },
     speciesText: {
         fontSize: 13,

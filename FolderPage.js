@@ -6,7 +6,7 @@ import Text from './UI/CustomTextComponent'
 
 const FolderPage = (props) => {
     const obs = props.route.params.obs
-
+    const folderName = props.route.params.name
     const keyExtractor = (item, index) => index.toString()
 
     const renderItem = ({ item }) => {
@@ -28,7 +28,7 @@ const FolderPage = (props) => {
     return (
         <View style={styles.master}>
             <View style={styles.nav}>
-                <StickyHeader title={obs[0].folderName}/>
+                <StickyHeader title={folderName}/>
             </View>
             <View style={styles.data}>
                 <Text id='modalHeader'>Havainnot</Text>

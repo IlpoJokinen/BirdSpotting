@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, TouchableHighlight, Image } from 'react-native'
 import { Card } from 'react-native-elements'
-import { Snackbar } from 'react-native-paper'
+import { Snackbar, Dialog, Portal, Button, Provider  } from 'react-native-paper'
 import StickyHeader from './UI/StickyHeader'
 import firebase from './firebaseConfig'
 import Text from './UI/CustomTextComponent'
@@ -13,6 +13,7 @@ const SpeciesPage = (props) => {
     let propSpecie = props.route.params.specie[0].toLowerCase() + props.route.params.specie.slice(1)
     let propBirds = props.route.params.birds
     const [visible, setVisible] = useState(false)
+    const [warning, openWarning] = useState(false)
     const [bird, setBird] = useState({
         latinName: '',
         finnishName: '',
@@ -31,9 +32,8 @@ const SpeciesPage = (props) => {
         endangerment: '',
         observation: 0,
     }
-    console.log('propSpecie',propSpecie)
+    
     useEffect(() => {
-        console.log('hei')
         getBird(propSpecie, propBirds)
     }, [props])
 
@@ -72,50 +72,72 @@ const SpeciesPage = (props) => {
         setVisible(false)
     }
 
+    function showWarning() {
+        openWarning(true)
+    }
+
+    function hideWarning() {
+        openWarning(false)
+        toggleModal(!showModal)
+    }
+
     return (
-        <View style={styles.master}>
-            <View style={styles.nav}>
-                <StickyHeader backIcon={true} navigate={navigate}/>
-            </View>
-            <View style={styles.imageBox}>
-                <Image source={{uri: bird.picture}} style={styles.image}/>
-            </View>
-            <View style={styles.infoBox}>
-                <View style={styles.card}>
-                    <Card title={`${bird.finnishName + '\n'}  -  ${'\n' + bird.latinName}`}>
-                        <View style={styles.cardItem}>
-                            <Text id='speciesText'>Lahko:</Text>
-                            <Text id='speciesText'>{bird.order}</Text>
-                        </View>
-                        <View style={styles.cardItem}>
-                            <Text id='speciesText'>Heimo:</Text>
-                            <Text id='speciesText'>{bird.family}</Text>
-                        </View>
-                        <View style={styles.cardItem}>
-                            <Text id='speciesText'>Uhanalaisuus:</Text>
-                            <Text id='speciesText'>{bird.endangerment}</Text>
-                        </View>
-                        <View style={styles.cardItem}>
-                            <Text id='speciesText'>Esiintyminen:</Text>
-                            <Text id='speciesText'> {bird.appearance}</Text>
-                        </View>
-                        <View style={styles.cardItem}>
-                            <Text id='speciesText'>Havainnot Suomessa:</Text>
-                            <Text id='speciesText'>{bird.observation}</Text>
-                        </View>
-                        <TouchableHighlight style={styles.openButton} onPress={() => toggleModal(true)}>
-                            <Text id='speciesButtonText'>Bongattu!</Text>
-                        </TouchableHighlight>
-                    </Card>
+        <Provider>
+            <View style={styles.master}>
+                <View style={styles.nav}>
+                    <StickyHeader backIcon={true} navigate={navigate}/>
                 </View>
-                <Modal toggleModal={toggleModal} modal={showModal} birdName={bird.finnishName} birdPic={bird.picture} setVisible={setVisible}/>
+                <View style={styles.imageBox}>
+                    <Image source={{uri: bird.picture}} style={styles.image}/>
+                </View>
+                <View style={styles.infoBox}>
+                    <View style={styles.card}>
+                        <Card title={`${bird.finnishName + '\n'}  -  ${'\n' + bird.latinName}`}>
+                            <View style={styles.cardItem}>
+                                <Text id='speciesText'>Lahko:</Text>
+                                <Text id='speciesText'>{bird.order}</Text>
+                            </View>
+                            <View style={styles.cardItem}>
+                                <Text id='speciesText'>Heimo:</Text>
+                                <Text id='speciesText'>{bird.family}</Text>
+                            </View>
+                            <View style={styles.cardItem}>
+                                <Text id='speciesText'>Uhanalaisuus:</Text>
+                                <Text id='speciesText'>{bird.endangerment}</Text>
+                            </View>
+                            <View style={styles.cardItem}>
+                                <Text id='speciesText'>Esiintyminen:</Text>
+                                <Text id='speciesText'> {bird.appearance}</Text>
+                            </View>
+                            <View style={styles.cardItem}>
+                                <Text id='speciesText'>Havainnot Suomessa:</Text>
+                                <Text id='speciesText'>{bird.observation}</Text>
+                            </View>
+                            <TouchableHighlight style={styles.openButton} onPress={() => toggleModal(true)}>
+                                <Text id='speciesButtonText'>Bongattu!</Text>
+                            </TouchableHighlight>
+                        </Card>
+                    </View>
+                    <Modal toggleModal={toggleModal} modal={showModal} birdName={bird.finnishName} birdPic={bird.picture} setVisible={setVisible} showWarning={showWarning} />
+                    <Portal>
+                        <Dialog visible={warning} onDismiss={hideWarning}>
+                            <Dialog.Title>Hupsista!</Dialog.Title>
+                            <Dialog.Content>
+                                <Text id='profileText'>Muista täyttää kaikki kentät ennen kuin tallennat havaintosi. Kentät </Text>
+                            </Dialog.Content>
+                            <Dialog.Actions>
+                                <Button onPress={hideWarning}>Ok</Button>
+                            </Dialog.Actions>
+                        </Dialog>
+                    </Portal>
+                </View>
+                <View>
+                    <Snackbar visible={visible} onDismiss={onDismissSnackBar} duration={2500} style={{borderRadius: 20, backgroundColor: '#002f6c'}}>
+                        Havainto lisätty profiiliisi!
+                    </Snackbar>
+                </View>
             </View>
-            <View>
-                <Snackbar visible={visible} onDismiss={onDismissSnackBar} duration={2500} style={{borderRadius: 20, backgroundColor: '#002f6c'}}>
-                    Havainto lisätty profiiliisi!
-                </Snackbar>
-            </View>
-        </View>
+        </Provider>
     )
 }
 const styles = StyleSheet.create({

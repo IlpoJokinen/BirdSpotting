@@ -57,7 +57,7 @@ export default function OrderList(props) {
 }
 const styles = StyleSheet.create({
     master: {
-      flex: 1,
+      flex: 1
     },
     list: {
         flex: 1,

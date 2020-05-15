@@ -52,41 +52,43 @@ const FolderList = ({spottedBird, setSpottedBird}) => {
         </View>
 }
 
-const ObservationModal = ({toggleModal, modal, birdName, birdPic, setVisible}) => {
-    const [spottedBird, setSpottedBird] = useState({folderName: '', sex: '', location: '', obs: 1, obsTime: ''})
+const ObservationModal = ({toggleModal, modal, birdName, birdPic, setVisible, showWarning }) => {
+    const [spottedBird, setSpottedBird] = useState({folderName: '', sex: '', location: '', obsTime: ''})
     const defaultDate = new Date()
     const [show, setShow] = useState(false)
     const [mode, setMode] = useState('time')
     const [clock, toggleClock] = useState(false)
-    const options1 = [
+    const options = [
         {id: 0, label: 'Koiras'},
         {id: 1, label: 'Naaras'}
-    ], options2 = [
-        {id: 0, label: 'Aamu'},
-        {id: 1, label: 'Päivä'},
-        {id: 2, label: 'Ilta'},
-        {id: 3, label: 'Yö'},
     ]
 
     function spottedBirdToDatabase() {
-        firebase.database().ref('observations/').push(
-          {'folderName': spottedBird.folderName, 'name': birdName, 'obs': spottedBird.obs, 'time': spottedBird.obsTime, 'location': spottedBird.location, 'sex': spottedBird.sex , 'image': birdPic}
-        )
-        toggleModal(!modal)
-        setVisible(true)
+        if (spottedBird.folderName === '' || spottedBird.obsTime === '' || spottedBird.location === '' || spottedBird.sex === '') {
+            toggleModal(!modal)
+            showWarning()
+        } else {
+            firebase.database().ref('observations/').push(
+                {'folderName': spottedBird.folderName, 'name': birdName, 'time': spottedBird.obsTime, 'location': spottedBird.location, 'sex': spottedBird.sex , 'image': birdPic}
+            )
+            toggleModal(!modal)
+            setVisible(true)
+        }
     }
-    console.log(spottedBird)
-    const onChange = (event, selectedDate) => {
+
+    function generateDateTimeObj(event, selectedDate) {
         let currentDate = selectedDate || defaultDate
         let date = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`
         let minuteString = currentDate.getMinutes().toString()
         let minutes = minuteString.length === 2 ? `${currentDate.getMinutes()}` : `0${currentDate.getMinutes()}`
         let hoursString = currentDate.getHours().toString()
         let hours = hoursString.length === 2 ? `${currentDate.getHours()}` : `0${currentDate.getHours()}`
+        
         let observationTime = {
             date: date,
             time: `${hours}:${minutes}`
         }
+
         setShow(false)
         setSpottedBird({...spottedBird, obsTime: observationTime})
         toggleClock(!clock)
@@ -101,7 +103,7 @@ const ObservationModal = ({toggleModal, modal, birdName, birdPic, setVisible}) =
         showMode('time')
     }
 
-    return (
+    return (            
         <View style={styles.master}>
             <Modal animationType='slide' transparent={true} visible={modal}>
                 <View style={styles.centeredView}>
@@ -112,7 +114,7 @@ const ObservationModal = ({toggleModal, modal, birdName, birdPic, setVisible}) =
                             <Text id='modalText'>Havainnon biotooppi</Text>
                             <TextInput value={spottedBird.location} onChangeText={(location) => setSpottedBird({...spottedBird, location: location})} mode="outlined" style={{height: 40, width: 200}} label='kangasmetsä, lehto...'/>
                             <Text id='modalText'>Sukupuoli</Text>
-                            <RadioGroup options={options1} onChange={(option) => setSpottedBird({...spottedBird, sex: option.label})} horizontal={true} circleStyle={{fillColor: '#2196F3'}}/>
+                            <RadioGroup options={options} onChange={(option) => setSpottedBird({...spottedBird, sex: option.label})} horizontal={true} circleStyle={{fillColor: '#2196F3'}}/>
                             <Text id='modalText'>Havainnon ajankohta</Text>
                             <View style={styles.timeRow}>
                                 <Text id='timeText'>Valitse aika</Text>
@@ -130,7 +132,7 @@ const ObservationModal = ({toggleModal, modal, birdName, birdPic, setVisible}) =
                                     mode={mode}
                                     is24Hour={true}
                                     display="clock"
-                                    onChange={onChange}
+                                    onChange={generateDateTimeObj}
                                 />
                             )} 
                             <Text id='modalText'>Tallennus kansioon</Text>

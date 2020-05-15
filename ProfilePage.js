@@ -9,52 +9,62 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 
 const Statistics = ({obsData}) => {
     const [highestObsRate, setHighestObsRate] = useState({name: '', count: 0, img: ''})
-
+    
     useEffect(() => {
         getHighestObservation()
     }, [obsData])
 
     function getHighestObservation() {
-        let frequencyObj = {}, 
-        compare = 0,
-        mostFrequent = '',
-        image = ''
-        
-        obsData.forEach(e => {
-            if (!frequencyObj[e.name]) {
-                frequencyObj[e.name] = 1
-            } else {
-                frequencyObj[e.name]++
-            }
-            if (frequencyObj[e.name] > compare) {
-                compare = frequencyObj[e.name]
-                mostFrequent = [e.name]
-                image = e.image
-            }
-        })
-        setHighestObsRate({...highestObsRate, name: mostFrequent.toString(), count: frequencyObj[mostFrequent], img: image})
+        if (obsData.length) {
+            let frequencyObj = {}, 
+            compare = 0,
+            mostFrequent = '',
+            image = ''
+            
+            obsData.forEach(e => {
+                if (!frequencyObj[e.name]) {
+                    frequencyObj[e.name] = 1
+                } else {
+                    frequencyObj[e.name]++
+                }
+                if (frequencyObj[e.name] > compare) {
+                    compare = frequencyObj[e.name]
+                    mostFrequent = [e.name]
+                    image = e.image
+                }
+            })
+            setHighestObsRate({...highestObsRate, name: mostFrequent.toString(), count: frequencyObj[mostFrequent], img: image})
+        } else {
+            setHighestObsRate(null)
+        }
     }
-    console.log(highestObsRate)
+
     return ( 
         <View>
-            <Card>
-                <Card.Content style={{flexDirection: 'row'}}>
-                    <Card.Content style={{flexDirection: 'column', width: '47%', marginLeft: 0}}>
-                        <Title>Yleisin havainto</Title>
-                        <Card.Content style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-                            <Paragraph>Nimi:</Paragraph>
-                            <Paragraph style={{fontWeight: 'bold'}}>{highestObsRate.name}</Paragraph>
+            {highestObsRate !== null ?
+                <Card style={{width: '100%'}}>
+                    <Card.Content style={{flexDirection: 'row'}}>
+                        <Card.Content style={{flexDirection: 'column', width: '60%', marginLeft: 0}}>
+                            <Title style={{textAlign: 'center'}}>Yleisin havainto</Title>
+                            <Card.Content style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+                                <Paragraph>Nimi:</Paragraph>
+                                <Paragraph style={{fontWeight: 'bold'}}>{highestObsRate.name}</Paragraph>
+                            </Card.Content>
+                            <Card.Content style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+                                <Paragraph>Havainnot:</Paragraph>
+                                <Paragraph style={{fontWeight: 'bold'}}>{highestObsRate.count}</Paragraph>
+                            </Card.Content>
                         </Card.Content>
-                        <Card.Content style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-                            <Paragraph>Havainnot:</Paragraph>
-                            <Paragraph style={{fontWeight: 'bold'}}>{highestObsRate.count}</Paragraph>
+                        <Card.Content style={{flexDirection: 'row', width: '40%'}}>
+                            <Card.Cover source={{ uri: highestObsRate.img}} style={{height: 100, width: 150, backgroundColor: 'white'}}/>
                         </Card.Content>
                     </Card.Content>
-                    <Card.Content style={{flexDirection: 'row', width: '53%'}}>
-                        <Card.Cover source={{ uri: highestObsRate.img}} style={{height: 100, width: 240, backgroundColor: 'white'}}/>
-                    </Card.Content>
-                </Card.Content>
-            </Card>
+                </Card>
+            : 
+                <Card>
+                    <Card.Content><Text id='profileText'>Ei havaintoja</Text></Card.Content>
+                </Card>
+            }
         </View>
     )
 }
@@ -63,12 +73,11 @@ export default function ProfilePage (props) {
     const { navigate } = props.navigation
     const [visible, setVisible] = useState(false)
     const [spottedBirds, setSpottedBirds] = useState([])
-    const [string, setString] = useState('')
     const [folder, setFolder] = useState({
         name: ''
     })
     const [folders, setFolders] = useState([])
- 
+
     function saveFolderToDatabase() {
         firebase.database().ref('folders/').push(
           {'folderName': folder.name}
@@ -77,6 +86,21 @@ export default function ProfilePage (props) {
         setVisible(true)
     }
  
+    function deleteObservationsByFolderName(db, folderName) {
+        let query = firebase.database().ref('observations/').orderByKey()
+        query.once('value')
+            .then(function(snapshot) {
+                snapshot.forEach(function(childSnapshot) {
+                    let pkey = childSnapshot.key
+                    let chval = childSnapshot.val()
+                    if (chval.folderName === folderName) {
+                        db.child('observations/'+pkey).remove()
+                    }
+            })
+            return true
+        })
+    }
+
     function deleteFolder(item) {
         let db = firebase.database().ref()
         let query = firebase.database().ref('folders/').orderByKey()
@@ -92,6 +116,7 @@ export default function ProfilePage (props) {
               }
             })
           })
+        deleteObservationsByFolderName(db, item.folderName)
     }
 
     function setFolderPropertys(name) {
@@ -105,8 +130,12 @@ export default function ProfilePage (props) {
     useEffect(() => {
         firebase.database().ref('observations/').on('value', snapshot => {
             const data = snapshot.val()
-            const birdObjs = Object.values(data)
-            setSpottedBirds(birdObjs)
+            if (data !== null) {
+                const birdObjs = Object.values(data)
+                setSpottedBirds(birdObjs)
+            } else {
+                setSpottedBirds([])
+            }
         })
     }, [])
 
@@ -143,7 +172,7 @@ export default function ProfilePage (props) {
                 data.push(obsObj)
             }
         }
-        navigate('Kansio', {obs: data})
+        navigate('Kansio', {obs: data, name: item.folderName})
     }
 
     const keyExtractor = (item, index) => index.toString()
@@ -175,11 +204,15 @@ export default function ProfilePage (props) {
                 </View>
                 <View style={styles.folders}>
                     <Text id='modalHeader'>Kansiot</Text>
-                    <FlatList
-                        keyExtractor={keyExtractor}
-                        renderItem={folderItem}
-                        data={folders}
-                    />
+                    {folders.length ?
+                        <FlatList
+                            keyExtractor={keyExtractor}
+                            renderItem={folderItem}
+                            data={folders}
+                        />
+                    :   <Text id='noFoldersText'>Ei luotuja kansioita, lisää ensimmäinen alhaalta!</Text>
+                    }
+                  
                 </View>
                 <Text id='profileText'>Lisää kansio</Text>
                 <View style={styles.addFolder}>
